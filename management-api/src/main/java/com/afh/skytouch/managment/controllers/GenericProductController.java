@@ -25,4 +25,9 @@ public class GenericProductController {
                 .buildAndExpand(product.getId()).toUri();
         return ResponseEntity.created(location).build();
     }
+
+    @GetMapping("/create")
+    public String createProduct(){
+        return "create-product";
+    }
 }
