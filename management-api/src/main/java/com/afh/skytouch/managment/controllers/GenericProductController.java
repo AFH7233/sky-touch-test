@@ -14,20 +14,30 @@ import java.util.UUID;
 @RequestMapping("/genericProduct")
 public class GenericProductController {
 
-    @GetMapping("/{uuid}")
-    public ResponseEntity<?> getProduct(@PathVariable UUID uuid){
-        return ResponseEntity.ok().build();
+    private static final String productAtributeName = "product";
+    private static final String creationPage = "create-product";
+    private static final String homePage = "home";
+    private static final String showProductsPage = "list-products";
+
+    @GetMapping("/showProduct")
+    public String getProducts(Model model){
+        return showProductsPage;
     }
 
     @PostMapping("")
-    public ResponseEntity<?> addProduct(@RequestBody GenericProduct product){
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(product.getId()).toUri();
-        return ResponseEntity.created(location).build();
+    public String addProduct(@ModelAttribute(productAtributeName) GenericProduct product,Model model){
+        model.addAttribute("message","The product with the id: " + product.getId() + " has been created");
+        return homePage;
+    }
+
+    @GetMapping("")
+    public String productHome(){
+        return homePage;
     }
 
     @GetMapping("/create")
-    public String createProduct(){
-        return "create-product";
+    public String createProduct(Model model){
+        model.addAttribute(productAtributeName,new GenericProduct());
+        return creationPage;
     }
 }
