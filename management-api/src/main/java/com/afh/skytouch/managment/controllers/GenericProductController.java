@@ -19,7 +19,7 @@ public class GenericProductController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("")
+    @PostMapping("/add")
     public ResponseEntity<?> addProduct(@RequestBody GenericProduct product){
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(product.getId()).toUri();
