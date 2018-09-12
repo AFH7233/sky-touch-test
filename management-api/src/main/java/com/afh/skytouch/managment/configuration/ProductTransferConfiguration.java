@@ -12,16 +12,16 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 
-@Configuration
-@EnableRabbit
+/*@Configuration
+@EnableRabbit*/
 public class ProductTransferConfiguration {
 
     public static final String exchange = "product";
     public static final String create = "product.create";
-    public static final String error = "product.error";
-    public static  final String success= "product.success";
+    public static final String status = "product.status";
     public static  final String getAll = "product.getAll";
 
     @Autowired
@@ -38,18 +38,13 @@ public class ProductTransferConfiguration {
     }
 
     @Bean
-    public Queue createQueue(){
+    public Queue getCreateQueue(){
         return new Queue(create,true);
     }
 
     @Bean
-    public Queue errorQueue(){
-        return new Queue(error,true);
-    }
-
-    @Bean
-    public Queue successQueue(){
-        return new Queue(success,true);
+    public Queue getStatusQueue(){
+        return new Queue(status,true);
     }
 
     @Bean
@@ -59,61 +54,42 @@ public class ProductTransferConfiguration {
 
 
     @Bean
-    public Binding createBinding() {
-        return BindingBuilder.bind(createQueue()).to(productExchange()).with(create);
+    public Binding getCreateBinding() {
+        return BindingBuilder.bind(getCreateQueue())
+                .to(productExchange())
+                .with(create);
     }
 
     @Bean
-    public Binding errorBinding() {
-        return BindingBuilder.bind(errorQueue()).to(productExchange()).with(error);
-    }
-
-    @Bean
-    public Binding successBinding() {
-        return BindingBuilder.bind(successQueue()).to(productExchange()).with(success);
+    public Binding getStatusBinding() {
+        return BindingBuilder.bind(getStatusQueue())
+                .to(productExchange())
+                .with(status);
     }
 
     @Bean
     public Binding getAllBinding() {
-        return BindingBuilder.bind(getAllQueue()).to(productExchange()).with(getAll);
+        return BindingBuilder.bind(getAllQueue())
+                .to(productExchange())
+                .with(getAll);
     }
 
-    @Bean
+    @Bean(name="createTemplate")
     public RabbitTemplate createTemplate() {
         RabbitTemplate template = new RabbitTemplate(rabbitConnectionFactory);
         template.setExchange(exchange);
         template.setRoutingKey(create);
+        template.setReplyAddress(exchange + "/" + status);
         template.setMessageConverter(converter());
         return template;
     }
 
-    @Bean
-    public RabbitTemplate errorTemplate() {
-        RabbitTemplate template = new RabbitTemplate(rabbitConnectionFactory);
-        template.setExchange(exchange);
-        template.setRoutingKey(error);
-        template.setMessageConverter(converter());
-        return template;
-    }
-
-    @Bean
-    public RabbitTemplate successTemplate() {
-        RabbitTemplate template = new RabbitTemplate(rabbitConnectionFactory);
-        template.setExchange(exchange);
-        template.setRoutingKey(success);
-        template.setMessageConverter(converter());
-        return template;
-    }
-
-    @Bean
-    public RabbitTemplate getAllTemplate() {
+    @Bean(name="allTemplate")
+    public RabbitTemplate allTemplate() {
         RabbitTemplate template = new RabbitTemplate(rabbitConnectionFactory);
         template.setExchange(exchange);
         template.setRoutingKey(getAll);
         template.setMessageConverter(converter());
         return template;
     }
-
-
-
 }

@@ -1,6 +1,8 @@
 package com.afh.skytouch.managment.controllers;
 
 import com.afh.skytouch.commons.dto.GenericProduct;
+import com.afh.skytouch.managment.queue.producers.ProductSender;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,18 +21,21 @@ public class GenericProductController {
     private static final String homePage = "home";
     private static final String showProductsPage = "list-products";
 
+    //@Autowired
+    //ProductSender sender;
+
     @GetMapping("/showProduct")
     public String getProducts(Model model){
         return showProductsPage;
     }
 
-    @PostMapping("")
+    @PostMapping("/add")
     public String addProduct(@ModelAttribute(productAtributeName) GenericProduct product,Model model){
-        model.addAttribute("message","The product with the id: " + product.getId() + " has been created");
+        //sender.sendProduct(product);
         return homePage;
     }
 
-    @GetMapping("")
+    @GetMapping("/home")
     public String productHome(){
         return homePage;
     }
