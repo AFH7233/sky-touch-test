@@ -1,10 +1,7 @@
 package com.afh.skytouch.managment.configuration;
 
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -12,24 +9,22 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 
-/*@Configuration
-@EnableRabbit*/
+@Configuration
+@EnableRabbit
 public class ProductTransferConfiguration {
 
     public static final String exchange = "product";
     public static final String create = "product.create";
-    public static final String status = "product.status";
     public static  final String getAll = "product.getAll";
 
     @Autowired
     private ConnectionFactory rabbitConnectionFactory;
 
     @Bean
-    public TopicExchange productExchange(){
-        return new TopicExchange(exchange);
+    public Exchange productExchange(){
+        return new DirectExchange(exchange);
     }
 
     @Bean
@@ -38,48 +33,38 @@ public class ProductTransferConfiguration {
     }
 
     @Bean
-    public Queue getCreateQueue(){
+    public Queue createQueue(){
         return new Queue(create,true);
     }
 
     @Bean
-    public Queue getStatusQueue(){
-        return new Queue(status,true);
-    }
-
-    @Bean
-    public Queue getAllQueue(){
+    public Queue allQueue(){
         return new Queue(getAll,true);
     }
 
-
     @Bean
-    public Binding getCreateBinding() {
-        return BindingBuilder.bind(getCreateQueue())
+    public Binding createQueueBinding(){
+        return BindingBuilder.bind(createQueue())
                 .to(productExchange())
-                .with(create);
+                .with(create)
+                .noargs();
     }
 
     @Bean
-    public Binding getStatusBinding() {
-        return BindingBuilder.bind(getStatusQueue())
+    public Binding getAllQueueBinding(){
+        return BindingBuilder.bind(createQueue())
                 .to(productExchange())
-                .with(status);
+                .with(getAll)
+                .noargs();
     }
 
-    @Bean
-    public Binding getAllBinding() {
-        return BindingBuilder.bind(getAllQueue())
-                .to(productExchange())
-                .with(getAll);
-    }
 
     @Bean(name="createTemplate")
     public RabbitTemplate createTemplate() {
         RabbitTemplate template = new RabbitTemplate(rabbitConnectionFactory);
         template.setExchange(exchange);
         template.setRoutingKey(create);
-        template.setReplyAddress(exchange + "/" + status);
+        template.setUseTemporaryReplyQueues(true);
         template.setMessageConverter(converter());
         return template;
     }
@@ -90,6 +75,7 @@ public class ProductTransferConfiguration {
         template.setExchange(exchange);
         template.setRoutingKey(getAll);
         template.setMessageConverter(converter());
+        template.setUseTemporaryReplyQueues(true);
         return template;
     }
 }

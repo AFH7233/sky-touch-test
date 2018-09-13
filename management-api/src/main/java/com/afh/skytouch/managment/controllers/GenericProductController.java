@@ -21,8 +21,8 @@ public class GenericProductController {
     private static final String homePage = "home";
     private static final String showProductsPage = "list-products";
 
-    //@Autowired
-    //ProductSender sender;
+    @Autowired
+    ProductSender sender;
 
     @GetMapping("/showProduct")
     public String getProducts(Model model){
@@ -31,7 +31,7 @@ public class GenericProductController {
 
     @PostMapping("/add")
     public String addProduct(@ModelAttribute(productAtributeName) GenericProduct product,Model model){
-        //sender.sendProduct(product);
+        sender.sendProduct(product);
         return homePage;
     }
 
