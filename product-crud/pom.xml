@@ -8,6 +8,12 @@
     <artifactId>product-crud</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <parent>
+        <groupId>com.afh.skytouch</groupId>
+        <artifactId>skytouch-test</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
     <dependencies>
         <dependency>
             <groupId>com.afh.skytouch</groupId>

@@ -10,9 +10,10 @@
 
     <parent>
         <groupId>com.afh.skytouch</groupId>
-        <artifactId>POM-PARENT</artifactId>
+        <artifactId>skytouch-test</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+
 
     <dependencies>
         <dependency>

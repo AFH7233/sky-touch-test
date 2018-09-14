@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.afh.skytouch</groupId>
-    <artifactId>POM-PARENT</artifactId>
+    <artifactId>skytouch-test</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -14,6 +14,12 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.5.7.RELEASE</version>
     </parent>
+
+    <modules>
+        <module>management-api</module>
+        <module>product-crud</module>
+        <module>commons-library</module>
+    </modules>
 
 
 </project>
