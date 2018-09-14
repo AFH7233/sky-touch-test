@@ -1,6 +1,8 @@
 package com.afh.skytouch.managment.controllers;
 
 import com.afh.skytouch.commons.dto.GenericProduct;
+import com.afh.skytouch.managment.queue.producers.ProductSender;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,20 +16,33 @@ import java.util.UUID;
 @RequestMapping("/genericProduct")
 public class GenericProductController {
 
-    @GetMapping("/{uuid}")
-    public ResponseEntity<?> getProduct(@PathVariable UUID uuid){
-        return ResponseEntity.ok().build();
+    private static final String productAtributeName = "product";
+    private static final String creationPage = "create-product";
+    private static final String homePage = "home";
+    private static final String showProductsPage = "list-products";
+
+    @Autowired
+    ProductSender sender;
+
+    @GetMapping("/showProduct")
+    public String getProducts(Model model){
+        return showProductsPage;
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addProduct(@RequestBody GenericProduct product){
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(product.getId()).toUri();
-        return ResponseEntity.created(location).build();
+    public String addProduct(@ModelAttribute(productAtributeName) GenericProduct product,Model model){
+        sender.sendProduct(product);
+        return homePage;
+    }
+
+    @GetMapping("/home")
+    public String productHome(){
+        return homePage;
     }
 
     @GetMapping("/create")
-    public String createProduct(){
-        return "create-product";
+    public String createProduct(Model model){
+        model.addAttribute(productAtributeName,new GenericProduct());
+        return creationPage;
     }
 }

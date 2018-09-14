@@ -8,6 +8,12 @@
     <artifactId>commons-library</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <parent>
+        <groupId>com.afh.skytouch</groupId>
+        <artifactId>skytouch-test</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
     <build>
         <plugins>
             <plugin>
