@@ -1,7 +1,14 @@
-package com.afh.skytouch.managment.configuration;
+package com.afh.skytouch.commons.configuration;
 
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -14,6 +21,7 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 
 
 @Configuration
@@ -33,8 +41,16 @@ public class ProductTransferConfiguration {
     }
 
     @Bean
-    public Jackson2JsonMessageConverter converter() {
-        return new Jackson2JsonMessageConverter();
+    public Jackson2JsonMessageConverter producerConverter() {
+        Jackson2JsonMessageConverter producerConverter = new Jackson2JsonMessageConverter(mapper());
+        return producerConverter;
+    }
+
+    @Bean
+    public MappingJackson2MessageConverter consumerConverter(){
+        MappingJackson2MessageConverter consumerConverter = new MappingJackson2MessageConverter();
+        consumerConverter.setObjectMapper(mapper());
+        return consumerConverter;
     }
 
     @Bean
@@ -70,7 +86,7 @@ public class ProductTransferConfiguration {
         template.setExchange(exchange);
         template.setRoutingKey(create);
         template.setUseTemporaryReplyQueues(true);
-        template.setMessageConverter(converter());
+        template.setMessageConverter(producerConverter());
         return template;
     }
 
@@ -79,8 +95,18 @@ public class ProductTransferConfiguration {
         RabbitTemplate template = new RabbitTemplate(rabbitConnectionFactory);
         template.setExchange(exchange);
         template.setRoutingKey(getAll);
-        template.setMessageConverter(converter());
-        template.setUseTemporaryReplyQueues(true);
+        template.setMessageConverter(producerConverter());
         return template;
+    }
+
+    @Bean
+    public ObjectMapper mapper() {
+        ObjectMapper mapper = new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new Jdk8Module())
+                .registerModule(new JavaTimeModule())
+                .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        return mapper;
     }
 }
