@@ -7,32 +7,48 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedStoredProcedureQueries;
+import javax.persistence.NamedStoredProcedureQuery;
+import javax.persistence.ParameterMode;
+import javax.persistence.StoredProcedureParameter;
 import java.time.Instant;
+import java.util.Date;
 import java.util.UUID;
 
-@Entity
+@Entity(name="generic_product")
 @Data
-@RequiredArgsConstructor
 @NoArgsConstructor
+@NamedStoredProcedureQueries({
+        @NamedStoredProcedureQuery(name="findAll",procedureName = "find_all",resultClasses = GenericProduct.class),
+        @NamedStoredProcedureQuery(name="save",procedureName = "insert_product",
+        parameters = {
+                @StoredProcedureParameter(name="id_param",mode = ParameterMode.IN,type  = String.class),
+                @StoredProcedureParameter(name="product_name_param",mode = ParameterMode.IN,type  = String.class),
+                @StoredProcedureParameter(name="creation_date_param",mode = ParameterMode.IN,type  = Date.class),
+                @StoredProcedureParameter(name="description_param",mode = ParameterMode.IN,type  = String.class),
+        })
+
+})
 public class GenericProduct
 {
     @Setter(AccessLevel.NONE)
-    @NonNull
-    private UUID id;
-
-    @NonNull
+    @Id
+    @Column(name="id")
+    private String id;
+    @Column(name="product_name")
     private String Name;
-
+    @Column(name="creation_date")
     @Setter(AccessLevel.NONE)
-    @NonNull
-    private Instant creationDate;
-
+    private Date creationDate;
+    @Column(name="description")
     private String description;
 
     {
-        id = UUID.randomUUID();
-        creationDate = Instant.now();
+        id = UUID.randomUUID().toString();
+        creationDate = Date.from(Instant.now());
     }
 
     @Override
