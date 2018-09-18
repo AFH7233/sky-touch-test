@@ -9,15 +9,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductSender {
 
-    @Autowired
-    @Qualifier("createTemplate")
-    public RabbitTemplate rabbitTemplate;
+    private RabbitTemplate productTemplate;
 
     @Autowired
     @Qualifier("createTemplate")
-    public RabbitTemplate statusTemplate;
+    public void setProductTemplate(RabbitTemplate rabbitTemplate){
+        this.productTemplate = rabbitTemplate;
+    }
+
 
     public void sendProduct(GenericProduct product){
-        rabbitTemplate.convertAndSend(product);
+        productTemplate.convertAndSend(product);
     }
 }

@@ -28,46 +28,33 @@ import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 @EnableRabbit
 public class ProductTransferConfiguration {
 
-    public static final String exchange = "product";
-    public static final String create = "product.create";
-    public static  final String getAll = "product.getAll";
+    private ConnectionFactory rabbitConnectionFactory;
 
     @Autowired
-    private ConnectionFactory rabbitConnectionFactory;
+    public void setRabbitConnectionFactory(ConnectionFactory rabbitConnectionFactory){
+        this.rabbitConnectionFactory = rabbitConnectionFactory;
+    }
 
     @Bean
     public Exchange productExchange(){
-        return new DirectExchange(exchange);
-    }
-
-    @Bean
-    public Jackson2JsonMessageConverter producerConverter() {
-        Jackson2JsonMessageConverter producerConverter = new Jackson2JsonMessageConverter(mapper());
-        return producerConverter;
-    }
-
-    @Bean
-    public MappingJackson2MessageConverter consumerConverter(){
-        MappingJackson2MessageConverter consumerConverter = new MappingJackson2MessageConverter();
-        consumerConverter.setObjectMapper(mapper());
-        return consumerConverter;
+        return new DirectExchange(QueueProperties.EXCHANGE);
     }
 
     @Bean
     public Queue createQueue(){
-        return new Queue(create,true);
+        return new Queue(QueueProperties.CREATE,true);
     }
 
     @Bean
     public Queue allQueue(){
-        return new Queue(getAll,true);
+        return new Queue(QueueProperties.GET_ALL,true);
     }
 
     @Bean
     public Binding createQueueBinding(){
         return BindingBuilder.bind(createQueue())
                 .to(productExchange())
-                .with(create)
+                .with(QueueProperties.CREATE)
                 .noargs();
     }
 
@@ -75,7 +62,7 @@ public class ProductTransferConfiguration {
     public Binding getAllQueueBinding(){
         return BindingBuilder.bind(createQueue())
                 .to(productExchange())
-                .with(getAll)
+                .with(QueueProperties.GET_ALL)
                 .noargs();
     }
 
@@ -83,30 +70,17 @@ public class ProductTransferConfiguration {
     @Bean(name="createTemplate")
     public RabbitTemplate createTemplate() {
         RabbitTemplate template = new RabbitTemplate(rabbitConnectionFactory);
-        template.setExchange(exchange);
-        template.setRoutingKey(create);
+        template.setExchange(QueueProperties.EXCHANGE);
+        template.setRoutingKey(QueueProperties.CREATE);
         template.setUseTemporaryReplyQueues(true);
-        template.setMessageConverter(producerConverter());
         return template;
     }
 
     @Bean(name="allTemplate")
     public RabbitTemplate allTemplate() {
         RabbitTemplate template = new RabbitTemplate(rabbitConnectionFactory);
-        template.setExchange(exchange);
-        template.setRoutingKey(getAll);
-        template.setMessageConverter(producerConverter());
+        template.setExchange(QueueProperties.CREATE);
+        template.setRoutingKey(QueueProperties.GET_ALL);
         return template;
-    }
-
-    @Bean
-    public ObjectMapper mapper() {
-        ObjectMapper mapper = new ObjectMapper()
-                .registerModule(new ParameterNamesModule())
-                .registerModule(new Jdk8Module())
-                .registerModule(new JavaTimeModule())
-                .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-        return mapper;
     }
 }

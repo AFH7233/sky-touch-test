@@ -16,33 +16,37 @@ import java.util.UUID;
 @RequestMapping("/genericProduct")
 public class GenericProductController {
 
-    private static final String productAtributeName = "product";
-    private static final String creationPage = "create-product";
-    private static final String homePage = "home";
-    private static final String showProductsPage = "list-products";
+    private static final String PRODUCT_ATTRIBUTE = "product";
+    private static final String CREATE = "create-product";
+    private static final String HOME = "home";
+    private static final String SHOW_PRODUCTS = "list-products";
+
+    private ProductSender sender;
 
     @Autowired
-    ProductSender sender;
+    public void setProductSender(ProductSender sender){
+        this.sender = sender;
+    }
 
     @GetMapping("/showProduct")
     public String getProducts(Model model){
-        return showProductsPage;
+        return SHOW_PRODUCTS;
     }
 
     @PostMapping("/add")
-    public String addProduct(@ModelAttribute(productAtributeName) GenericProduct product,Model model){
+    public String addProduct(@ModelAttribute(PRODUCT_ATTRIBUTE) GenericProduct product,Model model){
         sender.sendProduct(product);
-        return homePage;
+        return HOME;
     }
 
     @GetMapping("/home")
     public String productHome(){
-        return homePage;
+        return HOME;
     }
 
     @GetMapping("/create")
     public String createProduct(Model model){
-        model.addAttribute(productAtributeName,new GenericProduct());
-        return creationPage;
+        model.addAttribute(PRODUCT_ATTRIBUTE,new GenericProduct());
+        return CREATE;
     }
 }
