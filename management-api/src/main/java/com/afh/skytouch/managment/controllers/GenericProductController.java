@@ -1,6 +1,7 @@
 package com.afh.skytouch.managment.controllers;
 
 import com.afh.skytouch.commons.dto.GenericProduct;
+import com.afh.skytouch.managment.queue.producers.FindAllMessageSender;
 import com.afh.skytouch.managment.queue.producers.ProductSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,16 +23,20 @@ public class GenericProductController {
     private static final String showProductsPage = "list-products";
 
     @Autowired
-    ProductSender sender;
+    ProductSender productSender;
+
+    @Autowired
+    FindAllMessageSender allMessageSender;
 
     @GetMapping("/showProduct")
     public String getProducts(Model model){
+        allMessageSender.sendRequest();
         return showProductsPage;
     }
 
     @PostMapping("/add")
     public String addProduct(@ModelAttribute(productAtributeName) GenericProduct product,Model model){
-        sender.sendProduct(product);
+        productSender.sendProduct(product);
         return homePage;
     }
 

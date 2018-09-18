@@ -1,9 +1,6 @@
 package com.afh.skytouch.commons.configuration;
 
 
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
@@ -11,9 +8,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -30,14 +27,16 @@ public class ProductTransferConfiguration {
 
     public static final String exchange = "product";
     public static final String create = "product.create";
-    public static  final String getAll = "product.getAll";
+    public static final String findAllRequest = "product.findAllRequest";
+    public static final String findAllResponse = "product.findAllResponse";
+    public static final String status = "product.status";
 
     @Autowired
     private ConnectionFactory rabbitConnectionFactory;
 
     @Bean
     public Exchange productExchange(){
-        return new DirectExchange(exchange);
+        return new TopicExchange(exchange);
     }
 
     @Bean
@@ -59,8 +58,14 @@ public class ProductTransferConfiguration {
     }
 
     @Bean
-    public Queue allQueue(){
-        return new Queue(getAll,true);
+    public Queue findAllRequestQueue(){ return new Queue(findAllRequest,true); }
+
+    @Bean
+    public Queue findAllResponseQueue(){ return new Queue(findAllResponse,true); }
+
+    @Bean
+    public Queue statusQueue(){
+        return new Queue(status,true);
     }
 
     @Bean
@@ -72,10 +77,26 @@ public class ProductTransferConfiguration {
     }
 
     @Bean
-    public Binding getAllQueueBinding(){
-        return BindingBuilder.bind(createQueue())
+    public Binding findAllRequestQueueBinding(){
+        return BindingBuilder.bind(findAllRequestQueue())
                 .to(productExchange())
-                .with(getAll)
+                .with(findAllRequest)
+                .noargs();
+    }
+
+    @Bean
+    public Binding findAllResponseQueueBinding(){
+        return BindingBuilder.bind(findAllResponseQueue())
+                .to(productExchange())
+                .with(findAllResponse)
+                .noargs();
+    }
+
+    @Bean
+    public Binding getStatusQueueBinding(){
+        return BindingBuilder.bind(statusQueue())
+                .to(productExchange())
+                .with(status)
                 .noargs();
     }
 
@@ -93,8 +114,15 @@ public class ProductTransferConfiguration {
     @Bean(name="allTemplate")
     public RabbitTemplate allTemplate() {
         RabbitTemplate template = new RabbitTemplate(rabbitConnectionFactory);
+        template.setMessageConverter(producerConverter());
+        return template;
+    }
+
+    @Bean(name="statusTemplate")
+    public RabbitTemplate statusTemplate() {
+        RabbitTemplate template = new RabbitTemplate(rabbitConnectionFactory);
         template.setExchange(exchange);
-        template.setRoutingKey(getAll);
+        template.setRoutingKey(status);
         template.setMessageConverter(producerConverter());
         return template;
     }

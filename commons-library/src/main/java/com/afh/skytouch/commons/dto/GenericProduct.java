@@ -38,11 +38,14 @@ public class GenericProduct
     @Id
     @Column(name="id")
     private String id;
+
     @Column(name="product_name")
     private String Name;
+
     @Column(name="creation_date")
     @Setter(AccessLevel.NONE)
     private Date creationDate;
+
     @Column(name="description")
     private String description;
 

@@ -13,10 +13,6 @@ public class ProductSender {
     @Qualifier("createTemplate")
     public RabbitTemplate rabbitTemplate;
 
-    @Autowired
-    @Qualifier("createTemplate")
-    public RabbitTemplate statusTemplate;
-
     public void sendProduct(GenericProduct product){
         rabbitTemplate.convertAndSend(product);
     }
