@@ -40,19 +40,6 @@ public class ProductTransferConfiguration {
     }
 
     @Bean
-    public Jackson2JsonMessageConverter producerConverter() {
-        Jackson2JsonMessageConverter producerConverter = new Jackson2JsonMessageConverter(mapper());
-        return producerConverter;
-    }
-
-    @Bean
-    public MappingJackson2MessageConverter consumerConverter(){
-        MappingJackson2MessageConverter consumerConverter = new MappingJackson2MessageConverter();
-        consumerConverter.setObjectMapper(mapper());
-        return consumerConverter;
-    }
-
-    @Bean
     public Queue createQueue(){
         return new Queue(create,true);
     }
@@ -107,14 +94,12 @@ public class ProductTransferConfiguration {
         template.setExchange(exchange);
         template.setRoutingKey(create);
         template.setUseTemporaryReplyQueues(true);
-        template.setMessageConverter(producerConverter());
         return template;
     }
 
     @Bean(name="allTemplate")
     public RabbitTemplate allTemplate() {
         RabbitTemplate template = new RabbitTemplate(rabbitConnectionFactory);
-        template.setMessageConverter(producerConverter());
         return template;
     }
 
@@ -123,18 +108,6 @@ public class ProductTransferConfiguration {
         RabbitTemplate template = new RabbitTemplate(rabbitConnectionFactory);
         template.setExchange(exchange);
         template.setRoutingKey(status);
-        template.setMessageConverter(producerConverter());
         return template;
-    }
-
-    @Bean
-    public ObjectMapper mapper() {
-        ObjectMapper mapper = new ObjectMapper()
-                .registerModule(new ParameterNamesModule())
-                .registerModule(new Jdk8Module())
-                .registerModule(new JavaTimeModule())
-                .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-        return mapper;
     }
 }
