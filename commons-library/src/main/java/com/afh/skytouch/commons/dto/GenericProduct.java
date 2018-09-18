@@ -22,7 +22,7 @@ public class GenericProduct
     private UUID id;
 
     @NonNull
-    private String Name;
+    private String name;
 
     @Setter(AccessLevel.NONE)
     @NonNull
