@@ -11,6 +11,6 @@ public class ProductCreationListener {
 
     @RabbitListener(queues = QueueProperties.CREATE)
     public void onMessage(GenericProduct product){
-        System.out.println("Resultado: "+product.getId());
+
     }
 }
