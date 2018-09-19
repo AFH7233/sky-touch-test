@@ -13,7 +13,8 @@ public class ProductSender {
     @Qualifier("createTemplate")
     public RabbitTemplate rabbitTemplate;
 
-    public void sendProduct(GenericProduct product){
+    public String sendProduct(GenericProduct product){
         rabbitTemplate.convertAndSend(product);
+        return product.getId();
     }
 }

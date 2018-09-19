@@ -14,10 +14,12 @@ public class FindAllMessageSender {
     @Qualifier("allTemplate")
     public RabbitTemplate allTemplate;
 
-    public void sendRequest(){
+    public String sendRequest(){
+        FindAllMessage message = new FindAllMessage();
         allTemplate.convertAndSend(
                 ProductTransferConfiguration.exchange,
                 ProductTransferConfiguration.findAllRequest,
-                new FindAllMessage());
+                message);
+        return message.getId();
     }
 }

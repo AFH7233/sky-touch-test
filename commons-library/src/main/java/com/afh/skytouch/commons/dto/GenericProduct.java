@@ -40,7 +40,7 @@ public class GenericProduct
     private String id;
 
     @Column(name="product_name")
-    private String Name;
+    private String name;
 
     @Column(name="creation_date")
     @Setter(AccessLevel.NONE)

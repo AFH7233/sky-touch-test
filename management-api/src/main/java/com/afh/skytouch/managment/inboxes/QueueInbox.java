@@ -16,4 +16,8 @@ public class QueueInbox<K,V> {
         box.putIfAbsent(key,value);
     }
 
+    public boolean isMessagePresent(K key){
+        return box.containsKey(key);
+    }
+
 }
