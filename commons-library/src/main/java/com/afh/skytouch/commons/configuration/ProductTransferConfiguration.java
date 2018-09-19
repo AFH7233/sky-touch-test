@@ -66,6 +66,7 @@ public class ProductTransferConfiguration {
         template.setExchange(QueueProperties.EXCHANGE);
         template.setRoutingKey(QueueProperties.CREATE);
         template.setUseTemporaryReplyQueues(true);
+        template.setMessageConverter(converter());
         return template;
     }
 
@@ -74,6 +75,12 @@ public class ProductTransferConfiguration {
         RabbitTemplate template = new RabbitTemplate(rabbitConnectionFactory);
         template.setExchange(QueueProperties.CREATE);
         template.setRoutingKey(QueueProperties.GET_ALL);
+        template.setMessageConverter(converter());
         return template;
+    }
+
+    @Bean
+    public Jackson2JsonMessageConverter converter() {
+        return new Jackson2JsonMessageConverter();
     }
 }
