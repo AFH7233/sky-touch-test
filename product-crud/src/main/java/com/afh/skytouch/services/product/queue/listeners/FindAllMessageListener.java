@@ -1,6 +1,6 @@
 package com.afh.skytouch.services.product.queue.listeners;
 
-import com.afh.skytouch.commons.configuration.ProductTransferConfiguration;
+import com.afh.skytouch.commons.configuration.QueueProperties;
 import com.afh.skytouch.commons.dto.FindAllMessage;
 import com.afh.skytouch.commons.dto.GenericProduct;
 import com.afh.skytouch.services.product.queue.producers.FindAllMessageSender;
@@ -20,7 +20,7 @@ public class FindAllMessageListener {
     @Autowired
     private FindAllMessageSender sender;
 
-    @RabbitListener(queues = ProductTransferConfiguration.findAllRequest)
+    @RabbitListener(queues = QueueProperties.FIND_ALL_REQUEST)
     public void onMessage(FindAllMessage message){
         System.out.println("Message id: " + message.getId());
         List<GenericProduct> products = repository.findAll();

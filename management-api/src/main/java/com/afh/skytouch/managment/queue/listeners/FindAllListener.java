@@ -1,6 +1,6 @@
 package com.afh.skytouch.managment.queue.listeners;
 
-import com.afh.skytouch.commons.configuration.ProductTransferConfiguration;
+import com.afh.skytouch.commons.configuration.QueueProperties;
 import com.afh.skytouch.commons.dto.FindAllMessage;
 import com.afh.skytouch.managment.inboxes.QueueInbox;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -11,11 +11,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class FindAllListener {
 
-    @Autowired
-    @Qualifier("productList")
     private QueueInbox<String, FindAllMessage> inbox;
 
-    @RabbitListener(queues = ProductTransferConfiguration.findAllResponse)
+    @Autowired
+    @Qualifier("productList")
+    public void setInbox(QueueInbox<String, FindAllMessage> inbox){
+        this.inbox = inbox;
+    }
+
+    @RabbitListener(queues = QueueProperties.FIND_ALL_RESPONSE)
     public void onMessage(FindAllMessage message){
         inbox.writeMessage(message.getId(),message);
         System.out.println("Find All response: " + message.getProducts());

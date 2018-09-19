@@ -3,8 +3,6 @@ package com.afh.skytouch.commons.dto;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;

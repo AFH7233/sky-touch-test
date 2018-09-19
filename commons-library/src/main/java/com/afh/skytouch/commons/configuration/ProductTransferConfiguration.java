@@ -19,41 +19,35 @@ import org.springframework.context.annotation.Configuration;
 @EnableRabbit
 public class ProductTransferConfiguration {
 
-    public static final String exchange = "product";
-    public static final String create = "product.create";
-    public static final String findAllRequest = "product.findAllRequest";
-    public static final String findAllResponse = "product.findAllResponse";
-    public static final String status = "product.status";
-
     @Autowired
     private ConnectionFactory rabbitConnectionFactory;
 
     @Bean
     public Exchange productExchange(){
-        return new TopicExchange(exchange);
+        return new TopicExchange(QueueProperties.EXCHANGE);
     }
 
     @Bean
     public Queue createQueue(){
-        return new Queue(create,true);
+        return new Queue(QueueProperties.CREATE,true);
     }
 
     @Bean
-    public Queue findAllRequestQueue(){ return new Queue(findAllRequest,true); }
+    public Queue findAllRequestQueue(){ return new Queue(QueueProperties.FIND_ALL_REQUEST,true); }
 
     @Bean
-    public Queue findAllResponseQueue(){ return new Queue(findAllResponse,true); }
+    public Queue findAllResponseQueue(){ return new Queue(QueueProperties.FIND_ALL_RESPONSE,true); }
 
     @Bean
     public Queue statusQueue(){
-        return new Queue(status,true);
+        return new Queue(QueueProperties.STATUS,true);
     }
 
     @Bean
     public Binding createQueueBinding(){
         return BindingBuilder.bind(createQueue())
                 .to(productExchange())
-                .with(create)
+                .with(QueueProperties.CREATE)
                 .noargs();
     }
 
@@ -61,7 +55,7 @@ public class ProductTransferConfiguration {
     public Binding findAllRequestQueueBinding(){
         return BindingBuilder.bind(findAllRequestQueue())
                 .to(productExchange())
-                .with(findAllRequest)
+                .with(QueueProperties.FIND_ALL_REQUEST)
                 .noargs();
     }
 
@@ -69,7 +63,7 @@ public class ProductTransferConfiguration {
     public Binding findAllResponseQueueBinding(){
         return BindingBuilder.bind(findAllResponseQueue())
                 .to(productExchange())
-                .with(findAllResponse)
+                .with(QueueProperties.FIND_ALL_RESPONSE)
                 .noargs();
     }
 
@@ -77,7 +71,7 @@ public class ProductTransferConfiguration {
     public Binding getStatusQueueBinding(){
         return BindingBuilder.bind(statusQueue())
                 .to(productExchange())
-                .with(status)
+                .with(QueueProperties.STATUS)
                 .noargs();
     }
 
@@ -85,8 +79,8 @@ public class ProductTransferConfiguration {
     @Bean(name="createTemplate")
     public RabbitTemplate createTemplate() {
         RabbitTemplate template = new RabbitTemplate(rabbitConnectionFactory);
-        template.setExchange(exchange);
-        template.setRoutingKey(create);
+        template.setExchange(QueueProperties.EXCHANGE);
+        template.setRoutingKey(QueueProperties.CREATE);
         template.setUseTemporaryReplyQueues(true);
         template.setMessageConverter(converter());
         return template;
@@ -102,8 +96,8 @@ public class ProductTransferConfiguration {
     @Bean(name="statusTemplate")
     public RabbitTemplate statusTemplate() {
         RabbitTemplate template = new RabbitTemplate(rabbitConnectionFactory);
-        template.setExchange(exchange);
-        template.setRoutingKey(status);
+        template.setExchange(QueueProperties.EXCHANGE);
+        template.setRoutingKey(QueueProperties.STATUS);
         template.setMessageConverter(converter());
         return template;
     }

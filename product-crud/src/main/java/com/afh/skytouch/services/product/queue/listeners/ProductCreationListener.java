@@ -1,6 +1,6 @@
 package com.afh.skytouch.services.product.queue.listeners;
 
-import com.afh.skytouch.commons.configuration.ProductTransferConfiguration;
+import com.afh.skytouch.commons.configuration.QueueProperties;
 import com.afh.skytouch.commons.constans.StatusCode;
 import com.afh.skytouch.commons.dto.GenericProduct;
 import com.afh.skytouch.commons.dto.ProductStatus;
@@ -10,18 +10,24 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Observable;
-
 @Component
 public class ProductCreationListener{
 
-    @Autowired
-    ProductRepositoryCustom repository;
+    private ProductRepositoryCustom repository;
+
+    private StatusSender sender;
 
     @Autowired
-    StatusSender sender;
+    public void setRepository(ProductRepositoryCustom repository){
+        this.repository = repository;
+    }
 
-    @RabbitListener(queues = ProductTransferConfiguration.create)
+    @Autowired
+    public void setSender(StatusSender sender){
+        this.sender = sender;
+    }
+
+    @RabbitListener(queues = QueueProperties.CREATE)
     public void onMessage(GenericProduct product){
         ProductStatus status = new ProductStatus();
         status.setProductId(product.getId());

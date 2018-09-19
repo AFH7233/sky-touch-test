@@ -1,6 +1,6 @@
 package com.afh.skytouch.managment.queue.producers;
 
-import com.afh.skytouch.commons.configuration.ProductTransferConfiguration;
+import com.afh.skytouch.commons.configuration.QueueProperties;
 import com.afh.skytouch.commons.dto.FindAllMessage;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +17,8 @@ public class FindAllMessageSender {
     public String sendRequest(){
         FindAllMessage message = new FindAllMessage();
         allTemplate.convertAndSend(
-                ProductTransferConfiguration.exchange,
-                ProductTransferConfiguration.findAllRequest,
+                QueueProperties.EXCHANGE,
+                QueueProperties.FIND_ALL_REQUEST,
                 message);
         return message.getId();
     }
