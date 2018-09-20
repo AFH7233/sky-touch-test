@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.afh.skytouch</groupId>
-    <artifactId>management-api</artifactId>
+    <artifactId>product-crud</artifactId>
 
     <parent>
         <groupId>com.afh.skytouch</groupId>
@@ -13,25 +13,12 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-
     <dependencies>
         <dependency>
             <groupId>com.afh.skytouch</groupId>
             <artifactId>commons-library</artifactId>
             <version>${commons.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-jasper</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-        </dependency>
-
     </dependencies>
 
 
@@ -43,5 +30,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>

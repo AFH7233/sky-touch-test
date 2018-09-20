@@ -6,7 +6,12 @@
 
     <groupId>com.afh.skytouch</groupId>
     <artifactId>commons-library</artifactId>
-    <version>1.0-SNAPSHOT</version>
+
+    <parent>
+        <groupId>com.afh.skytouch</groupId>
+        <artifactId>skytouch-test</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
 
     <build>
         <plugins>
@@ -25,13 +30,24 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.2</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.1-api</artifactId>
-            <version>1.0.2.Final</version>
+            <version>${hibernate.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
     </dependencies>
 </project>
