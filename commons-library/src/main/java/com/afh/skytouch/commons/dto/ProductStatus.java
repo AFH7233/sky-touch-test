@@ -11,16 +11,16 @@ import java.util.UUID;
 public class ProductStatus
 {
     @Setter(AccessLevel.NONE)
-    private UUID id;
+    private String id;
 
-    private UUID productId;
+    private String productId;
 
     private StatusCode code;
 
     private String message;
 
     {
-        id = UUID.randomUUID();
+        id = UUID.randomUUID().toString();
     }
 
 }
