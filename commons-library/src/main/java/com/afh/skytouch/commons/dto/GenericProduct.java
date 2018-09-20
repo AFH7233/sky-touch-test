@@ -14,6 +14,7 @@ import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureParameter;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity(name="generic_product")
@@ -53,16 +54,16 @@ public class GenericProduct
     }
 
     @Override
-    public boolean equals(Object object){
-        if(object instanceof GenericProduct){
-            GenericProduct otherProduct = (GenericProduct)object;
-            return otherProduct.getId().equals(this.id);
-        }
-        return false;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GenericProduct)) return false;
+        GenericProduct that = (GenericProduct) o;
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
-    public int hashCode(){
-        return this.id.hashCode();
+    public int hashCode() {
+        return Objects.hash(getId());
     }
+
 }

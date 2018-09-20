@@ -14,11 +14,19 @@ import java.util.List;
 @Component
 public class FindAllMessageListener {
 
-    @Autowired
     private ProductRepositoryCustom repository;
 
-    @Autowired
     private FindAllMessageSender sender;
+
+    @Autowired
+    public void setRepository(ProductRepositoryCustom repository){
+        this.repository = repository;
+    }
+
+    @Autowired
+    public void setSender(FindAllMessageSender sender){
+        this.sender = sender;
+    }
 
     @RabbitListener(queues = QueueProperties.FIND_ALL_REQUEST)
     public void onMessage(FindAllMessage message){

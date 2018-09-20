@@ -19,8 +19,12 @@ import org.springframework.context.annotation.Configuration;
 @EnableRabbit
 public class ProductTransferConfiguration {
 
-    @Autowired
     private ConnectionFactory rabbitConnectionFactory;
+
+    @Autowired
+    public void setRabbitConnectionFactory(ConnectionFactory rabbitConnectionFactory){
+        this.rabbitConnectionFactory = rabbitConnectionFactory;
+    }
 
     @Bean
     public Exchange productExchange(){
@@ -29,18 +33,18 @@ public class ProductTransferConfiguration {
 
     @Bean
     public Queue createQueue(){
-        return new Queue(QueueProperties.CREATE,true);
+        return new Queue(QueueProperties.CREATE);
     }
 
     @Bean
-    public Queue findAllRequestQueue(){ return new Queue(QueueProperties.FIND_ALL_REQUEST,true); }
+    public Queue findAllRequestQueue(){ return new Queue(QueueProperties.FIND_ALL_REQUEST); }
 
     @Bean
-    public Queue findAllResponseQueue(){ return new Queue(QueueProperties.FIND_ALL_RESPONSE,true); }
+    public Queue findAllResponseQueue(){ return new Queue(QueueProperties.FIND_ALL_RESPONSE); }
 
     @Bean
     public Queue statusQueue(){
-        return new Queue(QueueProperties.STATUS,true);
+        return new Queue(QueueProperties.STATUS);
     }
 
     @Bean

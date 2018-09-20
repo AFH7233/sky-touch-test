@@ -6,15 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.Observable;
-import java.util.Observer;
-
 @Component
 public class StatusSender{
 
+    private RabbitTemplate statusTemplate;
+
     @Autowired
     @Qualifier("statusTemplate")
-    RabbitTemplate statusTemplate;
+    public void setStatusTemplate(RabbitTemplate statusTemplate){
+        this.statusTemplate = statusTemplate;
+    }
 
     public void sendStatus(ProductStatus status){
         statusTemplate.convertAndSend(status);

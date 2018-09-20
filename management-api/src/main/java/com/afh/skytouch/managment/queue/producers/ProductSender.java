@@ -9,9 +9,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductSender {
 
+    private RabbitTemplate rabbitTemplate;
+
     @Autowired
     @Qualifier("createTemplate")
-    public RabbitTemplate rabbitTemplate;
+    public void setRabbitTemplate(RabbitTemplate rabbitTemplate){
+        this.rabbitTemplate = rabbitTemplate;
+    }
 
     public String sendProduct(GenericProduct product){
         rabbitTemplate.convertAndSend(product);

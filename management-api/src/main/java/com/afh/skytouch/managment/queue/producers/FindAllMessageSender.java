@@ -10,9 +10,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class FindAllMessageSender {
 
+    private RabbitTemplate allTemplate;
+
     @Autowired
     @Qualifier("allTemplate")
-    public RabbitTemplate allTemplate;
+    public void setAllTemplate(RabbitTemplate allTemplate){
+        this.allTemplate = allTemplate;
+    }
 
     public String sendRequest(){
         FindAllMessage message = new FindAllMessage();

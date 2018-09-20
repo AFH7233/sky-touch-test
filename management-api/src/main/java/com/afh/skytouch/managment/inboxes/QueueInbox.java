@@ -8,7 +8,9 @@ public class QueueInbox<K,V> {
 
     public V readMessage(K key){
         V message = box.get(key);
-        box.remove(key);
+        if(message != null){
+            box.remove(key);
+        }
         return message;
     }
 
@@ -19,5 +21,4 @@ public class QueueInbox<K,V> {
     public boolean isMessagePresent(K key){
         return box.containsKey(key);
     }
-
 }

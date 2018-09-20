@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/genericProduct")
 public class GenericProductController {
 
-    private static final String productAtributeName = "product";
-    private static final String creationPage = "create-product";
-    private static final String homePage = "home";
-    private static final String waitPage = "wait";
-    private static final String showProductsPage = "list-products";
+    private static final String PRODUCT_ATRIBUTE_NAME = "product";
+    private static final String CREATION_PAGE = "create-product";
+    private static final String HOME_PAGE = "home";
+    private static final String WAIT_PAGE = "wait";
+    private static final String SHOW_PRODUCTS_PAGE = "list-products";
 
     private ProductSender productSender;
 
@@ -57,13 +57,13 @@ public class GenericProductController {
         System.out.println("Checking again: " + id);
         if(productListInbox.isMessagePresent(id)){
             FindAllMessage message = productListInbox.readMessage(id);
-            model.addAttribute(productAtributeName,message.getProducts());
-            return showProductsPage;
+            model.addAttribute(PRODUCT_ATRIBUTE_NAME,message.getProducts());
+            return SHOW_PRODUCTS_PAGE;
         }
         model.addAttribute("method","GET");
         model.addAttribute("location","/genericProduct/showProduct");
         model.addAttribute("id", id);
-        return waitPage;
+        return WAIT_PAGE;
     }
 
     @GetMapping("/requestProducts")
@@ -72,17 +72,17 @@ public class GenericProductController {
         model.addAttribute("method","GET");
         model.addAttribute("location","/genericProduct/showProduct");
         model.addAttribute("id", id);
-        return waitPage;
+        return WAIT_PAGE;
     }
 
     @PostMapping("/add")
-    public String addProduct(@ModelAttribute(productAtributeName) GenericProduct product,Model model){
+    public String addProduct(@ModelAttribute(PRODUCT_ATRIBUTE_NAME) GenericProduct product, Model model){
         System.out.println("Product sended: " + product.getId());
         String id = productSender.sendProduct(product);
         model.addAttribute("method","GET");
         model.addAttribute("location","/genericProduct/status");
         model.addAttribute("id", id);
-        return waitPage;
+        return WAIT_PAGE;
     }
 
     @GetMapping("/status")
@@ -91,23 +91,23 @@ public class GenericProductController {
         if(creationInbox.isMessagePresent(id)){
             ProductStatus status = creationInbox.readMessage(id);
             model.addAttribute("message",status.getMessage());
-            return homePage;
+            return HOME_PAGE;
         }
         model.addAttribute("method","GET");
         model.addAttribute("location","/genericProduct/status");
         model.addAttribute("id", id);
-        return waitPage;
+        return WAIT_PAGE;
     }
 
     @GetMapping("/home")
     public String productHome(){
-        return homePage;
+        return HOME_PAGE;
     }
 
     @GetMapping("/create")
     public String createProduct(Model model){
-        model.addAttribute(productAtributeName,new GenericProduct());
-        return creationPage;
+        model.addAttribute(PRODUCT_ATRIBUTE_NAME,new GenericProduct());
+        return CREATION_PAGE;
     }
 
 }
