@@ -29,20 +29,18 @@ public class ProductCreationListener{
 
     @RabbitListener(queues = QueueProperties.CREATE)
     public void onMessage(GenericProduct product){
-        ProductStatus status = new ProductStatus();
-        status.setProductId(product.getId());
-        try
-        {
-            repository.saveProduct(product);
-            status.setCode(StatusCode.SUCCESS);
-            status.setMessage("The product was added successfully");
+        if(product != null) {
+            ProductStatus status = new ProductStatus();
+            status.setProductId(product.getId());
+            try {
+                repository.saveProduct(product);
+                status.setCode(StatusCode.SUCCESS);
+                status.setMessage("The product was added successfully");
+            } catch (Exception e) {
+                status.setCode(StatusCode.CREATION_ERROR);
+                status.setMessage(e.getMessage());
+            }
+            sender.sendStatus(status);
         }
-        catch(Exception e)
-        {
-            status.setCode(StatusCode.CREATION_ERROR);
-            status.setMessage(e.getMessage());
-        }
-        sender.sendStatus(status);
-        System.out.println("Resultado: "+product.getId());
     }
 }

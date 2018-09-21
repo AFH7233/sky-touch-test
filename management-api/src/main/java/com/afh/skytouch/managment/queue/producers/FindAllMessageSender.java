@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 public class FindAllMessageSender {
 
@@ -15,10 +17,12 @@ public class FindAllMessageSender {
     @Autowired
     @Qualifier("allTemplate")
     public void setAllTemplate(RabbitTemplate allTemplate){
+        Objects.requireNonNull(allTemplate,"The required template must not be null");
         this.allTemplate = allTemplate;
     }
 
     public String sendRequest(){
+        Objects.requireNonNull(allTemplate,"The required template must not be null");
         FindAllMessage message = new FindAllMessage();
         allTemplate.convertAndSend(
                 QueueProperties.EXCHANGE,

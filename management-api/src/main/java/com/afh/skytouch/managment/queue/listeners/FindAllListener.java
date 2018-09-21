@@ -21,7 +21,8 @@ public class FindAllListener {
 
     @RabbitListener(queues = QueueProperties.FIND_ALL_RESPONSE)
     public void onMessage(FindAllMessage message){
-        inbox.writeMessage(message.getId(),message);
-        System.out.println("Find All response: " + message.getProducts());
+        if(message != null){
+            inbox.writeMessage(message.getId(),message);
+        }
     }
 }

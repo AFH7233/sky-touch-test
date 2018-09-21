@@ -22,7 +22,9 @@ public class StatusListener {
 
     @RabbitListener(queues = QueueProperties.STATUS)
     public void onMessage(ProductStatus status){
-        inbox.writeMessage(status.getProductId(),status);
+        if(status != null){
+            inbox.writeMessage(status.getProductId(),status);
+        }
     }
 
 }

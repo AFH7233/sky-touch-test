@@ -30,9 +30,10 @@ public class FindAllMessageListener {
 
     @RabbitListener(queues = QueueProperties.FIND_ALL_REQUEST)
     public void onMessage(FindAllMessage message){
-        System.out.println("Message id: " + message.getId());
-        List<GenericProduct> products = repository.findAll();
-        message.addAll(products);
-        sender.sendResponse(message);
+        if(message != null) {
+            List<GenericProduct> products = repository.findAll();
+            message.addAll(products);
+            sender.sendResponse(message);
+        }
     }
 }

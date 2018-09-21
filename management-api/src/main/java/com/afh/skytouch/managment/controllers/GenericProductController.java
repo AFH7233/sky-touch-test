@@ -56,7 +56,7 @@ public class GenericProductController {
     public String getProducts(@ModelAttribute("id") String id,Model model){
         System.out.println("Checking again: " + id);
         if(productListInbox.isMessagePresent(id)){
-            FindAllMessage message = productListInbox.readMessage(id);
+            FindAllMessage message = productListInbox.readMessage(id).get();
             model.addAttribute(PRODUCT_ATRIBUTE_NAME,message.getProducts());
             return SHOW_PRODUCTS_PAGE;
         }
@@ -89,7 +89,7 @@ public class GenericProductController {
     public String getProductStatus(@ModelAttribute("id") String id,Model model){
         System.out.println("Checking again: " + id);
         if(creationInbox.isMessagePresent(id)){
-            ProductStatus status = creationInbox.readMessage(id);
+            ProductStatus status = creationInbox.readMessage(id).get();
             model.addAttribute("message",status.getMessage());
             return HOME_PAGE;
         }
