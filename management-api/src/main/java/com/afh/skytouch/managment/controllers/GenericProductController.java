@@ -6,7 +6,9 @@ import com.afh.skytouch.commons.dto.ProductStatus;
 import com.afh.skytouch.managment.inboxes.QueueInbox;
 import com.afh.skytouch.managment.queue.producers.FindAllMessageSender;
 import com.afh.skytouch.managment.queue.producers.ProductSender;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,15 +16,19 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.Instant;
+
 @Controller
 @RequestMapping("/genericProduct")
 public class GenericProductController {
 
-    private static final String PRODUCT_ATRIBUTE_NAME = "product";
-    private static final String CREATION_PAGE = "create-product";
-    private static final String HOME_PAGE = "home";
-    private static final String WAIT_PAGE = "wait";
-    private static final String SHOW_PRODUCTS_PAGE = "list-products";
+    public static final String PRODUCT_ATRIBUTE_NAME = "product";
+    public static final String CREATION_PAGE = "create-product";
+    public static final String HOME_PAGE = "home";
+    public static final String WAIT_PAGE = "wait";
+    public static final String SHOW_PRODUCTS_PAGE = "list-products";
+
+    private Long timeout;
 
     private ProductSender productSender;
 
@@ -42,6 +48,11 @@ public class GenericProductController {
         this.productListInbox = productListInbox;
     }
 
+    @Value("${managment.service.timeout}")
+    public void setTimeout(Long timeout){
+        this.timeout = timeout;
+    }
+
     @Autowired
     public void setProductSender(ProductSender productSender){
         this.productSender = productSender;
@@ -53,50 +64,46 @@ public class GenericProductController {
     }
 
     @GetMapping("/showProduct")
-    public String getProducts(@ModelAttribute("id") String id,Model model){
+    public String getProducts(@ModelAttribute("id") String id,
+                              @ModelAttribute("time") String time,
+                              Model model){
         System.out.println("Checking again: " + id);
         if(productListInbox.isMessagePresent(id)){
             FindAllMessage message = productListInbox.readMessage(id).get();
             model.addAttribute(PRODUCT_ATRIBUTE_NAME,message.getProducts());
             return SHOW_PRODUCTS_PAGE;
         }
-        model.addAttribute("method","GET");
-        model.addAttribute("location","/genericProduct/showProduct");
-        model.addAttribute("id", id);
-        return WAIT_PAGE;
+        return isWaitPage(time, model, id,"GET","/genericProduct/showProduct");
     }
 
     @GetMapping("/requestProducts")
-    public String requestProducts(Model model){
+    public String requestProducts(@ModelAttribute("time") String time,
+                                  Model model){
         String id = allMessageSender.sendRequest();
-        model.addAttribute("method","GET");
-        model.addAttribute("location","/genericProduct/showProduct");
-        model.addAttribute("id", id);
-        return WAIT_PAGE;
+        return isWaitPage(time, model, id,"GET","/genericProduct/showProduct");
     }
 
     @PostMapping("/add")
-    public String addProduct(@ModelAttribute(PRODUCT_ATRIBUTE_NAME) GenericProduct product, Model model){
+    public String addProduct(@ModelAttribute(PRODUCT_ATRIBUTE_NAME) GenericProduct product,
+                             @ModelAttribute("time") String time,
+                             Model model){
         System.out.println("Product sended: " + product.getId());
         String id = productSender.sendProduct(product);
-        model.addAttribute("method","GET");
-        model.addAttribute("location","/genericProduct/status");
-        model.addAttribute("id", id);
-        return WAIT_PAGE;
+        return isWaitPage(time, model, id,"GET","/genericProduct/status");
     }
 
+
     @GetMapping("/status")
-    public String getProductStatus(@ModelAttribute("id") String id,Model model){
+    public String getProductStatus(@ModelAttribute("id") String id,
+                                   @ModelAttribute("time") String time,
+                                   Model model){
         System.out.println("Checking again: " + id);
         if(creationInbox.isMessagePresent(id)){
             ProductStatus status = creationInbox.readMessage(id).get();
             model.addAttribute("message",status.getMessage());
             return HOME_PAGE;
         }
-        model.addAttribute("method","GET");
-        model.addAttribute("location","/genericProduct/status");
-        model.addAttribute("id", id);
-        return WAIT_PAGE;
+        return isWaitPage(time, model, id,"GET","/genericProduct/status");
     }
 
     @GetMapping("/home")
@@ -108,6 +115,35 @@ public class GenericProductController {
     public String createProduct(Model model){
         model.addAttribute(PRODUCT_ATRIBUTE_NAME,new GenericProduct());
         return CREATION_PAGE;
+    }
+
+    private Long getTime(Long time){
+        return time == null? Instant.now().toEpochMilli():time;
+    }
+
+    private boolean isTimeout(Long time){
+        if(time == null){
+            return false;
+        }
+
+        Long current = Instant.now().toEpochMilli();
+        if(current-time>timeout){
+            return true;
+        }
+        return false;
+    }
+
+    private String isWaitPage(@ModelAttribute("time") String time, Model model, String id,String method,String redirect) {
+        Long parsedTime = time.isEmpty()? null:Long.valueOf(time);
+        if(!isTimeout(parsedTime)){
+            model.addAttribute("method",method);
+            model.addAttribute("location",redirect);
+            model.addAttribute("id", id);
+            model.addAttribute("time",getTime(parsedTime));
+            return WAIT_PAGE;
+        }
+        model.addAttribute("message","Service not available try harder");
+        return HOME_PAGE;
     }
 
 }

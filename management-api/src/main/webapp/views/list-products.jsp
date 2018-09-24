@@ -7,7 +7,7 @@
         <link rel="stylesheet" type="text/css" href="/resources/tables.css">
     </head>
     <body>
-        <h1>Todos los productos creados desde el inicio de los tiempos</h1>
+        <h1>All products since the begining of time</h1>
         <table>
             <tr>
                 <th>Id</th>

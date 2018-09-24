@@ -12,7 +12,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan(basePackages = {"com.afh.skytouch.commons"})
 @EnableJpaRepositories(basePackages = "com.afh.skytouch.management.repositories")
 @PropertySource("classpath:common.properties")
-@EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class })
 public class ProductServerConfiguration {
     public static void main(String[] args){
         SpringApplication.run(ProductServerConfiguration.class);
