@@ -19,7 +19,6 @@ import java.util.UUID;
 
 @Entity(name="generic_product")
 @Data
-@NoArgsConstructor
 @NamedStoredProcedureQueries({
         @NamedStoredProcedureQuery(name="findAll",procedureName = "find_all",resultClasses = GenericProduct.class),
         @NamedStoredProcedureQuery(name="save",procedureName = "insert_product",
@@ -48,7 +47,7 @@ public class GenericProduct
     @Column(name="description")
     private String description;
 
-    {
+    public GenericProduct() {
         id = UUID.randomUUID().toString();
         creationDate = Date.from(Instant.now());
     }
