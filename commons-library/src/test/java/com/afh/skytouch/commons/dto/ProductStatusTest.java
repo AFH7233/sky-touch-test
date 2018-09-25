@@ -1,8 +1,7 @@
 package com.afh.skytouch.commons.dto;
 
 import org.junit.Test;
-
-import java.lang.reflect.Field;
+import org.mockito.internal.util.reflection.Whitebox;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -20,9 +19,7 @@ public class ProductStatusTest {
     public void testEquals() throws NoSuchFieldException, IllegalAccessException {
         ProductStatus statusA = new ProductStatus();
         ProductStatus statusB = new ProductStatus();
-        Field id = statusB.getClass().getDeclaredField("id");
-        id.setAccessible(true);
-        id.set(statusB,statusA.getId());
+        Whitebox.setInternalState(statusB,"id",statusA.getId());
         assertEquals(statusB,statusA);
     }
 

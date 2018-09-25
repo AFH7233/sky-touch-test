@@ -48,7 +48,7 @@ public class GenericProductController {
         this.productListInbox = productListInbox;
     }
 
-    @Value("${managment.service.timeout}")
+    @Value("${management.service.timeout}")
     public void setTimeout(Long timeout){
         this.timeout = timeout;
     }
@@ -67,7 +67,6 @@ public class GenericProductController {
     public String getProducts(@ModelAttribute("id") String id,
                               @ModelAttribute("time") String time,
                               Model model){
-        System.out.println("Checking again: " + id);
         if(productListInbox.isMessagePresent(id)){
             FindAllMessage message = productListInbox.readMessage(id).get();
             model.addAttribute(PRODUCT_ATRIBUTE_NAME,message.getProducts());
@@ -87,7 +86,6 @@ public class GenericProductController {
     public String addProduct(@ModelAttribute(PRODUCT_ATRIBUTE_NAME) GenericProduct product,
                              @ModelAttribute("time") String time,
                              Model model){
-        System.out.println("Product sended: " + product.getId());
         String id = productSender.sendProduct(product);
         return isWaitPage(time, model, id,"GET","/genericProduct/status");
     }
@@ -97,7 +95,6 @@ public class GenericProductController {
     public String getProductStatus(@ModelAttribute("id") String id,
                                    @ModelAttribute("time") String time,
                                    Model model){
-        System.out.println("Checking again: " + id);
         if(creationInbox.isMessagePresent(id)){
             ProductStatus status = creationInbox.readMessage(id).get();
             model.addAttribute("message",status.getMessage());

@@ -9,6 +9,13 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <properties>
+        <lombok.version>1.18.2</lombok.version>
+        <database.orm.version>1.0.2.Final</database.orm.version>
+        <commons.version>1.0-SNAPSHOT</commons.version>
+        <mysql.connector.version>8.0.12</mysql.connector.version>
+    </properties>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>

@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class FindAllMessageSenderTest {
     @Mock

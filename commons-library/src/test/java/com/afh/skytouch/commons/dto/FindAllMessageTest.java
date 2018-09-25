@@ -2,14 +2,13 @@ package com.afh.skytouch.commons.dto;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
+import org.mockito.internal.util.reflection.Whitebox;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class FindAllMessageTest {
 
@@ -42,9 +41,7 @@ public class FindAllMessageTest {
     public void testEquals() throws NoSuchFieldException, IllegalAccessException {
         FindAllMessage messageA = new FindAllMessage();
         FindAllMessage messageB = new FindAllMessage();
-        Field id = messageB.getClass().getDeclaredField("id");
-        id.setAccessible(true);
-        id.set(messageB,messageA.getId());
+        Whitebox.setInternalState(messageB,"id",messageA.getId());
         assertEquals(messageB,messageA);
     }
 }
