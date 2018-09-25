@@ -22,11 +22,11 @@ import java.time.Instant;
 @RequestMapping("/genericProduct")
 public class GenericProductController {
 
-    public static final String PRODUCT_ATRIBUTE_NAME = "product";
-    public static final String CREATION_PAGE = "create-product";
-    public static final String HOME_PAGE = "home";
-    public static final String WAIT_PAGE = "wait";
-    public static final String SHOW_PRODUCTS_PAGE = "list-products";
+    static final String PRODUCT_ATRIBUTE_NAME = "product";
+    static final String CREATION_PAGE = "create-product";
+    static final String HOME_PAGE = "home";
+    static final String WAIT_PAGE = "wait";
+    static final String SHOW_PRODUCTS_PAGE = "list-products";
 
     private Long timeout;
 
