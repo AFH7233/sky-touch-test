@@ -39,8 +39,9 @@ public class ProductCreationListener{
             } catch (Exception e) {
                 status.setCode(StatusCode.CREATION_ERROR);
                 status.setMessage(e.getMessage());
+            }finally {
+                sender.sendStatus(status);
             }
-            sender.sendStatus(status);
         }
     }
 }

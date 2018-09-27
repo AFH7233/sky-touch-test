@@ -10,6 +10,5 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan(value = "com.afh.skytouch")
 @EntityScan(basePackages = {"com.afh.skytouch.commons"})
 @EnableJpaRepositories(basePackages = "com.afh.skytouch.management.repositories")
-@PropertySource("classpath:common.properties")
 public class TestConfiguration {
 }

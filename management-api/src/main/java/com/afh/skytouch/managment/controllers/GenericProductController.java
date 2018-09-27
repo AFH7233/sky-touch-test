@@ -34,112 +34,109 @@ public class GenericProductController {
 
     private FindAllMessageSender allMessageSender;
 
-    private QueueInbox<String,ProductStatus> creationInbox;
+    private QueueInbox<String, ProductStatus> creationInbox;
 
     private QueueInbox<String, FindAllMessage> productListInbox;
 
     @Autowired
-    public void setCreationInbox(QueueInbox<String,ProductStatus> creationInbox){
+    public void setCreationInbox(QueueInbox<String, ProductStatus> creationInbox) {
         this.creationInbox = creationInbox;
     }
 
     @Autowired
-    public void setProductListInbox(QueueInbox<String, FindAllMessage>  productListInbox){
+    public void setProductListInbox(QueueInbox<String, FindAllMessage> productListInbox) {
         this.productListInbox = productListInbox;
     }
 
     @Value("${management.service.timeout}")
-    public void setTimeout(Long timeout){
+    public void setTimeout(Long timeout) {
         this.timeout = timeout;
     }
 
     @Autowired
-    public void setProductSender(ProductSender productSender){
+    public void setProductSender(ProductSender productSender) {
         this.productSender = productSender;
     }
 
     @Autowired
-    public void setAllMessageSender(FindAllMessageSender allMessageSender){
+    public void setAllMessageSender(FindAllMessageSender allMessageSender) {
         this.allMessageSender = allMessageSender;
     }
 
     @GetMapping("/showProduct")
     public String getProducts(@ModelAttribute("id") String id,
                               @ModelAttribute("time") String time,
-                              Model model){
-        if(productListInbox.isMessagePresent(id)){
+                              Model model) {
+        if (productListInbox.isMessagePresent(id)) {
             FindAllMessage message = productListInbox.readMessage(id).get();
-            model.addAttribute(PRODUCT_ATRIBUTE_NAME,message.getProducts());
+            model.addAttribute(PRODUCT_ATRIBUTE_NAME, message.getProducts());
             return SHOW_PRODUCTS_PAGE;
         }
-        return isWaitPage(time, model, id,"GET","/genericProduct/showProduct");
+        return isWaitPage(time, model, id, "GET", "/genericProduct/showProduct");
     }
 
     @GetMapping("/requestProducts")
     public String requestProducts(@ModelAttribute("time") String time,
-                                  Model model){
+                                  Model model) {
         String id = allMessageSender.sendRequest();
-        return isWaitPage(time, model, id,"GET","/genericProduct/showProduct");
+        return isWaitPage(time, model, id, "GET", "/genericProduct/showProduct");
     }
 
     @PostMapping("/add")
     public String addProduct(@ModelAttribute(PRODUCT_ATRIBUTE_NAME) GenericProduct product,
                              @ModelAttribute("time") String time,
-                             Model model){
+                             Model model) {
         String id = productSender.sendProduct(product);
-        return isWaitPage(time, model, id,"GET","/genericProduct/status");
+        return isWaitPage(time, model, id, "GET", "/genericProduct/status");
     }
 
 
     @GetMapping("/status")
     public String getProductStatus(@ModelAttribute("id") String id,
                                    @ModelAttribute("time") String time,
-                                   Model model){
-        if(creationInbox.isMessagePresent(id)){
+                                   Model model) {
+        if (creationInbox.isMessagePresent(id)) {
             ProductStatus status = creationInbox.readMessage(id).get();
-            model.addAttribute("message",status.getMessage());
+            model.addAttribute("message", status.getMessage());
             return HOME_PAGE;
         }
-        return isWaitPage(time, model, id,"GET","/genericProduct/status");
+        return isWaitPage(time, model, id, "GET", "/genericProduct/status");
     }
 
     @GetMapping("/home")
-    public String productHome(){
+    public String productHome() {
         return HOME_PAGE;
     }
 
     @GetMapping("/create")
-    public String createProduct(Model model){
-        model.addAttribute(PRODUCT_ATRIBUTE_NAME,new GenericProduct());
+    public String createProduct(Model model) {
+        model.addAttribute(PRODUCT_ATRIBUTE_NAME, new GenericProduct());
         return CREATION_PAGE;
     }
 
-    private Long getTime(Long time){
-        return time == null? Instant.now().toEpochMilli():time;
+    private Long getTime(Long time) {
+        return time == null ? Instant.now().toEpochMilli() : time;
     }
 
-    private boolean isTimeout(Long time){
-        if(time == null){
+    private boolean isTimeout(Long time) {
+        if (time == null) {
             return false;
         }
 
         Long current = Instant.now().toEpochMilli();
-        if(current-time>timeout){
-            return true;
-        }
-        return false;
+        return current - time > timeout;//shame
     }
 
-    private String isWaitPage(@ModelAttribute("time") String time, Model model, String id,String method,String redirect) {
-        Long parsedTime = time.isEmpty()? null:Long.valueOf(time);
-        if(!isTimeout(parsedTime)){
-            model.addAttribute("method",method);
-            model.addAttribute("location",redirect);
+    private String isWaitPage(@ModelAttribute("time") String time, Model model, String id, String method, String redirect) {
+        Long parsedTime = time.isEmpty() ? null : Long.valueOf(time);
+        if (!isTimeout(parsedTime)) {
+            model.addAttribute("method", method);
+            model.addAttribute("location", redirect);
             model.addAttribute("id", id);
-            model.addAttribute("time",getTime(parsedTime));
+            model.addAttribute("time", getTime(parsedTime));
             return WAIT_PAGE;
         }
-        model.addAttribute("message","Service not available try harder");
+        model.addAttribute("message", "Service not available try harder");
         return HOME_PAGE;
     }
 
