@@ -1,0 +1,11 @@
+spring:
+  mvc:
+    view:
+      prefix: /views/
+      suffix: .jsp
+  rabbitmq:
+    port: 5700
+
+management:
+  service:
+     timeout: 1000

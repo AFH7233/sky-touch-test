@@ -1,0 +1,27 @@
+server:
+  port: 8181
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:4406/sky_touch_db?&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: afuentes
+    password: supersecret
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+  rabbitmq:
+    port: 5700
+
+db:
+  stored:
+    procedures:
+      findAll: findAll
+      save: save
+      insert:
+        parameters:
+          id: id_param
+          productName: product_name_param
+          creationDate: creation_date_param
+          description: description_param

@@ -1,0 +1,12 @@
+server:
+  port: 9191
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:4406/sky_touch_db?&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: afuentes
+    password: supersecret
+
+    jpa:
+      hibernate:
+        ddl-auto: create
